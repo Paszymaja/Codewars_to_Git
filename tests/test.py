@@ -8,7 +8,7 @@ class MyTestCase(unittest.TestCase):
         password = input("password: ")
 
         result = page_connect(username, password)
-        file = open('temp\\page_temp.html')
+        file = open('/temp/page_temp.html')
         self.assertEqual(file.read(), result)
 
 

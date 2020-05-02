@@ -11,7 +11,7 @@ def selenium_chrome():
     chrome_options = Options()
     chrome_options.add_argument("--headless")
     chrome_options.add_argument("--window-size=1920x1080")
-    chrome_driver = '/temp/chromedriver.exe'
+    chrome_driver = 'D:\\Codewars_to_Git\\temp\\chromedriver.exe'
     browser = webdriver.Chrome(options=chrome_options, executable_path=chrome_driver)
     return browser
 
@@ -37,7 +37,7 @@ def login():
 
 def page_connect(user_email, user_password):
     file_path = 'temp/cred.txt'
-    user_name = linecache.getline(file_path, 2)
+    user_name = linecache.getline(file_path, 1)
     browser = selenium_chrome()
     browser.get('https://www.codewars.com/users/sign_in')
     browser.find_element_by_id('user_email').send_keys(user_email)
@@ -53,7 +53,7 @@ def github_connect():
     g = Github(linecache.getline(file_path, 2))
     user = g.get_user()
     kata_names = []
-    repo_name = 'CodeWars_2'
+    repo_name = 'CodeWars'
     for repo in user.get_repos():
         kata_names.append(repo.name)
     if repo_name not in kata_names:
@@ -90,7 +90,6 @@ def main():
         ret = ''.join(code).split('|')
         repo.create_file(f'{name}/README.md', 'Copy from CodeWars', copy_details(link)[3:-4], branch='test')
         repo.create_file(f'{name}/{name}.py', 'Copy from CodeWars', ret[i], branch='test')
-    open('temp/page_temp.html', 'w').close()
 
 
 if __name__ == '__main__':
