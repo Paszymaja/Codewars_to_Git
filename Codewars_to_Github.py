@@ -1,6 +1,6 @@
 import os
 import easygui
-import linecache
+import time
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from bs4 import BeautifulSoup
@@ -11,7 +11,7 @@ def selenium_chrome():
     chrome_options = Options()
     chrome_options.add_argument("--headless")
     chrome_options.add_argument("--window-size=1920x1080")
-    chrome_driver = 'D:\\Codewars_to_Git\\temp\\chromedriver.exe'
+    chrome_driver = 'temp/chromedriver.exe'
     browser = webdriver.Chrome(options=chrome_options, executable_path=chrome_driver)
     return browser
 
@@ -36,8 +36,7 @@ def login():
 
 
 def page_connect(user_email, user_password):
-    file_path = 'temp/cred.txt'
-    user_name = linecache.getline(file_path, 1)
+    user_name = os.getenv('USER_NAME')
     browser = selenium_chrome()
     browser.get('https://www.codewars.com/users/sign_in')
     browser.find_element_by_id('user_email').send_keys(user_email)
@@ -45,12 +44,14 @@ def page_connect(user_email, user_password):
     browser.find_element_by_xpath('//button[text()="Log In"]').click()
     profile_url = f'https://www.codewars.com/users/{user_name}/completed_solutions'
     browser.get(profile_url)
+    browser.execute_script('window.scrollTo(0, 5000)')
+    time.sleep(2)
     return browser.page_source
 
 
 def github_connect():
-    file_path = 'temp/cred.txt'
-    g = Github(linecache.getline(file_path, 2))
+    GITHUB_TOKEN = os.getenv('GITHUB_TOKEN')
+    g = Github(GITHUB_TOKEN)
     user = g.get_user()
     kata_names = []
     repo_name = 'CodeWars'
