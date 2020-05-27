@@ -10,7 +10,6 @@ from github import Github
 def selenium_chrome():
     chrome_options = Options()
     chrome_options.add_argument("--headless")
-    chrome_options.add_argument("--window-size=1920x1080")
     chrome_driver = 'temp/chromedriver.exe'
     browser = webdriver.Chrome(options=chrome_options, executable_path=chrome_driver)
     return browser
@@ -66,7 +65,7 @@ def copy_details(link):
     browser = selenium_chrome()
     browser.get(f'https://www.codewars.com{link}')
     page = browser.page_source
-    soup = BeautifulSoup(page, 'html.parser')
+    soup = BeautifulSoup(page, 'lxml')
     results = soup.find(id='description').find('p')
     return str(results)
 
@@ -79,7 +78,7 @@ def main():
         page_txt.write(page_connect(login_window[0], login_window[1]))
 
     code = []
-    soup = BeautifulSoup(page_txt.read(), 'html.parser')
+    soup = BeautifulSoup(page_txt.read(), 'lxml')
     results = soup.find_all('div', class_='list-item solutions')
     repo = github_connect()
     for i, kata in enumerate(results):
