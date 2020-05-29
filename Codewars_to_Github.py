@@ -1,6 +1,7 @@
 import os
 import easygui
 import time
+import datetime
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from bs4 import BeautifulSoup
@@ -71,6 +72,7 @@ def copy_details(link):
 
 
 def main():
+    start_time = time.time()
     page_temp = 'temp/page_temp.html'
     page_txt = open(page_temp, 'r+')
     if os.path.getsize(page_temp) == 0:
@@ -90,6 +92,9 @@ def main():
         ret = ''.join(code).split('|')
         repo.create_file(f'{name}/README.md', 'Copy from CodeWars', copy_details(link)[3:-4], branch='test')
         repo.create_file(f'{name}/{name}.py', 'Copy from CodeWars', ret[i], branch='test')
+
+    time_elapsed = time.time() - start_time
+    print("Time Elapsed " + str(datetime.timedelta(seconds=time_elapsed)).split(".")[0])
 
 
 if __name__ == '__main__':
