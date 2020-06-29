@@ -12,5 +12,4 @@ gen
 .idea/misc.xml
 .idea/modules.xml
 .idea/vcs.xml
-requirements.txt
 venv/
