@@ -1,11 +1,13 @@
 import os
 import easygui
 import time
-import datetime
+
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from bs4 import BeautifulSoup
 from github import Github
+
+from scripts.decorators import logtime
 
 
 def selenium_chrome():
@@ -25,11 +27,11 @@ def login():
     while True:
         if field_values is None:
             break
-        errmsg = ""
+        errmsg = ''
         for i in range(len(field_names)):
             if field_values[i].strip() == "":
-                errmsg = errmsg + ('"%s" is a required field.\n\n' % field_names[i])
-        if errmsg == "":
+                errmsg = f'{field_names[i]} is a required field. \n\n'
+        if errmsg == '':
             break
         field_values = easygui.multpasswordbox(errmsg, title, field_names, field_values)
     return field_values
@@ -50,13 +52,9 @@ def page_connect(user_email, user_password):
 
 
 def github_connect():
-    GITHUB_TOKEN = os.getenv('GITHUB_TOKEN')
-    g = Github(GITHUB_TOKEN)
-    user = g.get_user()
-    kata_names = []
+    user = Github(os.getenv('GITHUB_TOKEN')).get_user()
     repo_name = 'CodeWars'
-    for repo in user.get_repos():
-        kata_names.append(repo.name)
+    kata_names = [repo for repo in user.get_repos()]
     if repo_name not in kata_names:
         user.create_repo(repo_name)
     return user.get_repo(repo_name)
@@ -65,14 +63,12 @@ def github_connect():
 def copy_details(link):
     browser = selenium_chrome()
     browser.get(f'https://www.codewars.com{link}')
-    page = browser.page_source
-    soup = BeautifulSoup(page, 'lxml')
-    results = soup.find(id='description').find('p')
-    return str(results)
+    soup = BeautifulSoup(browser.page_source, 'lxml')
+    return str(soup.find(id='description').find('p'))
 
 
+@logtime
 def main():
-    start_time = time.time()
     page_temp = 'temp/page_temp.html'
     page_txt = open(page_temp, 'r+')
     if os.path.getsize(page_temp) == 0:
@@ -92,9 +88,6 @@ def main():
         ret = ''.join(code).split('|')
         repo.create_file(f'{name}/README.md', 'Copy from CodeWars', copy_details(link)[3:-4], branch='test')
         repo.create_file(f'{name}/{name}.py', 'Copy from CodeWars', ret[i], branch='test')
-
-    time_elapsed = time.time() - start_time
-    print("Time Elapsed " + str(datetime.timedelta(seconds=time_elapsed)).split(".")[0])
 
 
 if __name__ == '__main__':

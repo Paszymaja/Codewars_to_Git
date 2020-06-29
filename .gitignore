@@ -13,5 +13,4 @@ gen
 .idea/modules.xml
 .idea/vcs.xml
 requirements.txt
-temp/
 venv/
